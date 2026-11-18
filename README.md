@@ -1,20 +1,41 @@
 # Football Analytics Platform
 
-Initial scaffold for a football video-analysis platform. Computer vision, ingestion, and analytics are deliberately independent so a future identity/AI layer can consume their observations and event candidates.
+Phase 1 implements a local video-ingestion pipeline: validated MP4/MOV/AVI uploads, metadata extraction, background frame sampling/preprocessing, persistent job/frame metadata, and a connected Next.js dashboard. Computer vision analysis is deliberately out of scope.
 
 ## Quick start
 
-1. Copy `.env.example` to `.env` and set `POSTGRES_PASSWORD` plus a local `DATABASE_URL` if running without Docker.
-2. Create a Python 3.11+ virtual environment and run `pip install -e .`.
-3. Start the API with `uvicorn backend.app.main:app --reload`; visit `/docs` and `/health`.
-4. For containers, run `docker compose up --build` after defining `POSTGRES_PASSWORD` in `.env`.
-5. In `frontend`, run `npm install` then `npm run dev`.
+### Windows PowerShell
 
-Run checks: `pytest`, `python -m json.tool shared/data_contracts/observation.schema.json`, and `npm run typecheck`.
+Terminal 1 (backend):
+
+```powershell
+Copy-Item .env.example .env
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r backend\requirements.txt
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --reload --port 8010
+```
+
+Terminal 2 (frontend):
+
+```powershell
+cd frontend
+Copy-Item .env.local.example .env.local
+npm install
+npm run dev -- --port 3001
+```
+
+Open `http://localhost:3001`; API docs are at `http://127.0.0.1:8010/docs`. Upload MP4, MOV, or AVI footage, choose a sampling rate, and start processing. Files are stored under `storage/uploads` and `storage/frames/<video-id>`; access them through the API, not direct browser paths.
+
+For PostgreSQL via Docker, set a real `POSTGRES_PASSWORD` in `.env`, then run `docker compose up -d --build`. Docker supplies its own PostgreSQL connection URL. The default non-Docker setup uses SQLite so the application remains locally runnable without a database service.
+
+FFprobe is optional but recommended for richer codec/duration metadata. Install an FFmpeg build for Windows, add its `bin` directory to `PATH`, then verify with `ffprobe -version`. OpenCV metadata extraction and frame processing still work when it is unavailable.
+
+Run checks: `python -m pytest`, `python -m json.tool shared/data_contracts/observation.schema.json`, and `npm run typecheck` inside `frontend`.
 
 ## Scope
 
-The endpoints and CV interfaces are placeholders. No model, event detection, confirmed identity, or football statistic is implemented. Optional GPU/model packages must be added in a separately pinned environment when needed.
+No model, player/event detection, tracking, identity, or football statistic is implemented. Optional GPU/model packages must be added in a separately pinned environment when needed.
 
 ## Baseline versions
 

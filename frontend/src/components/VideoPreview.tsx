@@ -1,0 +1,2 @@
+import type { VideoMetadata } from "@/types/video";
+export function VideoPreview({ video, url }: { video: VideoMetadata; url: string }) { return <section className="panel preview"><video controls preload="metadata" src={url}>Your browser cannot preview this video.</video><div><p className="eyebrow">Selected video</p><h2>{video.original_filename}</h2><p>{(video.file_size / 1024 / 1024).toFixed(2)} MB · {video.upload_status}</p></div></section>; }

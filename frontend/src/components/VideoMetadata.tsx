@@ -1,0 +1,3 @@
+import type { VideoMetadata } from "@/types/video";
+const value = (v: string | number | null) => v ?? "Unavailable";
+export function VideoMetadata({ video }: { video: VideoMetadata }) { return <section className="panel"><p className="eyebrow">Source metadata</p><dl className="metadata"><div><dt>Duration</dt><dd>{video.duration_seconds ? `${video.duration_seconds.toFixed(2)} s` : "Unavailable"}</dd></div><div><dt>Resolution</dt><dd>{value(video.resolution)}</dd></div><div><dt>FPS</dt><dd>{value(video.fps)}</dd></div><div><dt>Frames</dt><dd>{value(video.total_frames)}</dd></div><div><dt>Format</dt><dd>{video.format.toUpperCase()}</dd></div><div><dt>Codec</dt><dd>{value(video.codec)}</dd></div></dl></section>; }
